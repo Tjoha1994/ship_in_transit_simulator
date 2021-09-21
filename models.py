@@ -851,6 +851,7 @@ class ShipModel:
         self.fuel_me.append(cons_me)
         self.fuel_hsg.append(cons_hsg)
         self.fuel.append(cons)
+        return load_perc_me,load_perc_hsg,load_data.load_on_main_engine,load_data.load_on_electrical,rate_me,rate_hsg,cons_me,cons_hsg,cons
 
 
 class ShipModelSimplifiedPropulsion:
