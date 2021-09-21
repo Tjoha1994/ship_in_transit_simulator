@@ -55,8 +55,8 @@ def make_fuel_estimation_lookup_table(
                                 simulation_time=200
                             )
                             env_config = EnvironmentConfiguration(
-                                current_velocity_component_from_north=current_magnitude * np.sin(rel_current_dir),
-                                current_velocity_component_from_east=current_magnitude * np.cos(rel_current_dir),
+                                current_velocity_component_from_north=1-*current_magnitude * np.sin(rel_current_dir),
+                                current_velocity_component_from_east=-1*current_magnitude * np.cos(rel_current_dir),
                                 wind_speed=wind_magnitude,
                                 wind_direction=rel_wind_dir
                             )
