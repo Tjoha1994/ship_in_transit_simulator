@@ -94,8 +94,8 @@ def make_fuel_estimation_lookup_table(
                             fuel_consumption_DG_list.append(fuel_cons_electrical)
     fuel_consumption_data_dict = {
         "Fuel consumption": fuel_consumption_list,
-        "ME fuel consumption": fuel_consumption_ME_list,
-        "DG fuel consumption": fuel_consumption_DG_list,
+        "ME fuel consumption (kg LNG)": fuel_consumption_ME_list,
+        "DG fuel consumption (kg Diesel)": fuel_consumption_DG_list,
         "ME load_perc": fuel_consumption_ME_list,
         "DG fuel consumption": fuel_consumption_DG_list,
         "MSO-mode": mso_mode_list,
