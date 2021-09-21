@@ -24,6 +24,10 @@ def make_fuel_estimation_lookup_table(
     relative_wind_direction_list = []
     wind_magnitude_list = []
     fuel_consumption_list = []
+    load_percentage_ME_list = []
+    load_percentage_DG_list = []
+    fuel_consumption_ME_list = []
+    fuel_consumption_DG_list = []
     for mso_mode_index, mso_mode in enumerate(machinery_config.machinery_modes.list_of_modes):
         for speed in speed_setpoints:
             for rel_current_dir in relative_current_directions:
@@ -64,22 +68,36 @@ def make_fuel_estimation_lookup_table(
 
                             desired_heading_radians = 0
                             desired_forward_speed_meters_per_second = speed
+                            load_percentage_ME_list_curr = []
+                            load_percentage_DG_list_curr = []
                             while ship_model.int.time < ship_model.int.sim_time:
                                 # Find appropriate rudder angle and engine throttle
                                 rudder_angle = -ship_model.rudderang_from_headingref(desired_heading_radians)
                                 engine_load = ship_model.loadperc_from_speedref(desired_forward_speed_meters_per_second)
 
                                 # Update and integrate differential equations for current time step
-                                _, _, _, _, fuel_consumption = ship_model.fuel_consumption(engine_load)
+                                _, _, fuel_cons_me, fuel_cons_electrical, fuel_consumption = ship_model.fuel_consumption(engine_load)
+                                load_perc_ME, load_perc_DG = = ship_model.load_perc(engine_load)
+                                load_percentage_ME_list_curr.append(load_perc_ME)
+                                load_percentage_DG_list_curr.append(load_perc_DG)
                                 ship_model.update_differentials(load_perc=engine_load, rudder_angle=rudder_angle)
                                 ship_model.integrate_differentials()
 
                                 # Progress time variable to the next time step
                                 ship_model.int.next_time()
-
+                            load_perc_ME_mean = sum(load_percentage_ME_list_curr) / len(load_percentage_ME_list_curr)
+                            load_perc_DG_mean = sum(load_percentage_DG_list_curr) / len(load_percentage_DG_list_curr)
                             fuel_consumption_list.append(fuel_consumption)
+                            load_percentage_ME_list.append(load_perc_ME_mean)
+                            load_percentage_DG_list.append(load_perc_DG_mean)
+                            fuel_consumption_ME_list.append(fuel_cons_me)
+                            fuel_consumption_DG_list.append(fuel_cons_electrical)
     fuel_consumption_data_dict = {
         "Fuel consumption": fuel_consumption_list,
+        "ME fuel consumption": fuel_consumption_ME_list,
+        "DG fuel consumption": fuel_consumption_DG_list,
+        "ME load_perc": fuel_consumption_ME_list,
+        "DG fuel consumption": fuel_consumption_DG_list,
         "MSO-mode": mso_mode_list,
         "Speed": speed_list,
         "Current direction": relative_current_direction_list,
@@ -164,16 +182,16 @@ if __name__ == "__main__":
         rudder_angle_to_sway_force_coefficient=50e3
     )
 
-    speeds = [5.0, 7.5, 10]
+    speeds = [1.0, 3.0, 5.0, 7.0, 9.0]
     current_dirs = [
         0,
         90 * np.pi / 180,
         180 * np.pi / 180,
         270 * np.pi / 180,
     ]
-    current_magnitudes = [0, 2]
+    current_magnitudes = [0, 2, 4, 6]
     wind_dirs = [0]
-    wind_magnitudes = [2, 7]
+    wind_magnitudes = [0, 2, 5, 8, 11, 14, 17, 20]
     make_fuel_estimation_lookup_table(
         ship_config=ship_config,
         machinery_config=machinery_config,
