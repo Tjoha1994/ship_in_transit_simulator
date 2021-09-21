@@ -77,7 +77,7 @@ def make_fuel_estimation_lookup_table(
 
                                 # Update and integrate differential equations for current time step
                                 _, _, fuel_cons_me, fuel_cons_electrical, fuel_consumption = ship_model.fuel_consumption(engine_load)
-                                load_perc_ME, load_perc_DG = = ship_model.load_perc(engine_load)
+                                load_perc_ME, load_perc_DG = ship_model.load_perc(engine_load)
                                 load_percentage_ME_list_curr.append(load_perc_ME)
                                 load_percentage_DG_list_curr.append(load_perc_DG)
                                 ship_model.update_differentials(load_perc=engine_load, rudder_angle=rudder_angle)
